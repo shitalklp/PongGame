@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong game in Javascript</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            overflow:hidden;
+
+        }
+        #canvas{
+            background-color:#111 ;
+
+        }
+    </style>
+</head>
+<body>
+    <Canvas id ="canvas"></Canvas>
+    <script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');//ctx is set to reference the context object, with which you can start drawing. 
+
+
+//for ip up and down
+
+
+
+canvas.width=window.innerWidth;
+canvas.height = window.innerHeight;
+    function vec2(x,y)
+    {
+            return {x:x,y:y};//returns obj which having value x as x and y as y
+    
+        }
+function Ball(pos,velocity,radius)
+    {   
+                this.pos = pos ;//refernce to curr obj
+                this.velocity = velocity;
+                this.radius = radius ;
+
+                this.update = function(){
+                    this.pos.x += this.velocity.x;
+                    this.pos.y += this.velocity.y;
+                };
+            
+                this.draw = function ()
+            {
+                ctx.fillStyle = "#33ff00";//color of ball
+                ctx.strokeStyle ="#33ff00";//color of ball outline
+                ctx.beginPath();
+                ctx.arc(this.pos.x,this.pos.y , this.radius,0,Math.PI*2);//x,y,radius, start angle, end angle
+                
+                ctx.fill();//fill the color in ball
+                ctx.stroke();//for outline of circle
+            };
+    
+    }   
+     function paddle(pos, velocity , width ,height)
+     {
+        this.pos = pos;
+        this.velocity= velocity;
+        this. width =  width ;
+        this.height =height;
+        this.update = function() {};
+       
+        this.draw = function()
+        {
+            ctx.fillStyle =  "#33ff00";
+            ctx.fillRect(this.pos.x,this.pos.y ,this. width ,this.height);
+           
+        };
+     }
+
+     function ballcollisionWithEdges(ball)
+     {
+        if(ball.pos.y + ball.radius >= canvas.height)
+        {
+            ball.velocity.y *=  -1;
+        //bounce back fro  bottom
+        }
+        if(ball.pos.y  - ball.radius <= 0 ){
+            ball.velocity.y *= -1;
+        }
+
+        if(ball.pos.x + ball.radius >= canvas.width)
+        {
+            ball.velocity.x *= -1;
+        
+         }
+        if(ball.pos.x - ball.radius <=0)
+        {
+            ball.velocity.x *= -1;
+        }
+     }
+    
+    const ball = new Ball(vec2(200,200), vec2(10,10),20);//vec2 is fun to create 2d vector
+//vecto is for cross path
+const paddle1 = new paddle(vec2(0,50),vec2(5,5),20,160);
+const paddle2 = new paddle(vec2(canvas.width-20,30),vec2(5,5),20,160);
+    function gameupdate()
+    {
+    // ballx+=ballvelocityx; //if we write this line only ball willl move in horizontal diection 
+    // bally+=ballvelocityx;//bcoz of this it will move in digonally
+        ball.update();
+        paddle1.update(); 
+        paddle2.update(); 
+        ballcollisionWithEdges(ball);
+        
+    }
+
+    function gamedraw ()
+        {
+            
+            // ctx.beginPath();
+            // ctx.arc(ballx,bally,ballradius,0,Math.PI*2);//x,y,radius, start angle, end angle
+            // ctx.stroke();//for outline of circle
+            ball.draw();
+            paddle1.draw(); 
+            paddle2.draw(); 
+        }
+
+function gameloop()
+    {
+        ctx.clearRect(0,0,canvas.width,canvas.height); //to clear back circle moving
+        
+        window.requestAnimationFrame(gameloop);// this mthd is going to cal function 60 time per sec
+    
+    
+        gameupdate();
+        gamedraw();
+    }
+    gameloop();
+    </script>
+</body>
+</html>
